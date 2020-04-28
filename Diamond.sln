@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{26C0D5
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Lib", "Common.Lib\Common.Lib.csproj", "{3EB89C83-F37B-4961-8309-6A68865F3954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.LibTests", "Common.LibTests\Common.LibTests.csproj", "{A63EA6A6-D278-43BA-B8A6-3EB5E58311A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.LibTests", "Common.LibTests\Common.LibTests.csproj", "{A63EA6A6-D278-43BA-B8A6-3EB5E58311A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
