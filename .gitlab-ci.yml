@@ -13,8 +13,7 @@ build:
   - vs2019
   - win2016
   only:
-  - debug
-  - develop
+  - master
   script:
   - nuget restore Diamond.sln -Verbosity normal -NoCache
   - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:minimal
@@ -26,8 +25,7 @@ test:
   - vs2019
   - win2016
   only:
-  - debug
-  - develop
+  - master
   script:
   - nuget restore Diamond.sln -Verbosity quiet -NoCache
   - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:quiet
@@ -42,8 +40,7 @@ deploy:
   - vs2019
   - win2016
   only:
-  - debug
-  - develop
+  - master
   script:
   - set VERSION=2020.4.28.0
   - nuget restore Diamond.sln -Verbosity quiet -NoCache
