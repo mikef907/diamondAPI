@@ -29,8 +29,6 @@ test:
   script:
   - nuget restore Diamond.sln -Verbosity quiet -NoCache
   - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:quiet
-  - cd ..
-  - echo "*** TEST .NET FRAMEWORK ASSEMBLIES ***"
   - mstest /testcontainer:Common.LibTests\bin\Release\Common.LibTests.dll
 
 deploy:
