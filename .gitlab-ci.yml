@@ -1,0 +1,60 @@
+before_script:
+  - call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\Common7\Tools\VsDevCmd.bat"
+
+stages:
+  - build
+  - test
+  - deploy
+
+build:
+  stage: build
+  tags: 
+  - shell-cmd
+  - vs2019
+  - win2016
+  only:
+  - debug
+  - develop
+  script:
+  - nuget restore Diamond.sln -Verbosity normal -NoCache
+  - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:minimal
+
+test:
+  stage: test
+  tags: 
+  - shell-cmd
+  - vs2019
+  - win2016
+  only:
+  - debug
+  - develop
+  script:
+  - nuget restore Diamond.sln -Verbosity quiet -NoCache
+  - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:quiet
+  - cd ..
+  - echo "*** TEST .NET FRAMEWORK ASSEMBLIES ***"
+  - mstest /testcontainer:Common.LibTests\bin\Release\Common.LibTests.dll
+
+deploy:
+  stage: deploy
+  tags: 
+  - shell-cmd
+  - vs2019
+  - win2016
+  only:
+  - debug
+  - develop
+  script:
+  - set VERSION=2020.4.28.0
+  - nuget restore Diamond.sln -Verbosity quiet -NoCache
+  - msbuild /t:build Common.Lib\Common.Lib.csproj /p:Configuration=Release /verbosity:quiet
+  - msbuild /t:build Identity.Lib\Identity.Lib.csproj /p:Configuration=Release /verbosity:quiet
+  - msbuild /t:build STS.Lib\STS.Lib.csproj /p:Configuration=Release /verbosity:quiet
+  - msbuild /t:build Games.Lib\Games.Lib.csproj /p:Configuration=Release /verbosity:quiet
+  - msbuild /t:build Identity.Web\Identity.Web.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishProfile=FolderProfile /verbosity:quiet
+  - msbuild /t:build STS.Web\STS.Web.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishProfile=FolderProfile /verbosity:quiet
+  - msbuild /t:build Games.Web\Games.Web.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishProfile=FolderProfile /verbosity:quiet
+  #- dotnet octo pack --id=ahfc.websvc.sandbox2 --version=%VERSION% --basePath=\bin\Release\publish --outFolder=.
+  - echo "*** PUBLISH .NET FRAMEWORK ASSEMBLIES ***"
+  - dotnet nuget push Arch(.NetFramework)\*.nupkg --api-key %NUGET_FEED_KEY% --source %NUGET_FEED_URL%
+  - set VERSION=
