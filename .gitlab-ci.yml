@@ -17,6 +17,7 @@ build:
   script:
   - nuget restore Diamond.sln -Verbosity normal -NoCache
   - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:minimal
+  - dotnet test Common.LibTests
 
 test:
   stage: test
