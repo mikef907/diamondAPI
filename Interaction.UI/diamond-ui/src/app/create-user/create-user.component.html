@@ -1,0 +1,16 @@
+<fieldset>
+    <legend>Create User</legend>
+    <form class="d-flex flex-column justify-content-center" style="max-width: 20rem;" (submit)="create()">
+        <div class="form-group">
+            <input class="m-1 form-control" [(ngModel)]="model.email" type="email" email name="email"
+                placeholder="email@server.com">
+            <input class="m-1 form-control" [(ngModel)]="model.firstName" name="firstName" placeholder="First Name">
+            <input class="m-1 form-control" [(ngModel)]="model.lastName" name="lastName" placeholder="Last Name">
+            <input class="m-1 form-control" [(ngModel)]="model.password" type="password" name="password"
+                placeholder="Password">
+            <div class="m-1">
+                <button class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </form>
+</fieldset>

@@ -1,0 +1,12 @@
+<fieldset>
+    <legend>Log in</legend>
+    <form class="d-flex flex-column justify-content-center" (submit)="submit()" style="max-width: 20rem;">
+        <div class="form-group">
+            <input class="m-1 form-control" type="email" [(ngModel)]="model.email" email name="email">
+            <input class="m-1 form-control" type="password" [(ngModel)]="model.password" name="password">
+            <div class="m-1">
+                <button class="btn btn-primary">Submit</button>
+            </div>
+        </div>
+    </form>
+</fieldset>

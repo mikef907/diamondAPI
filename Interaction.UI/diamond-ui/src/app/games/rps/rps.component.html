@@ -1,0 +1,46 @@
+<div class="d-flex flex-column">
+    <ng-container [ngSwitch]="!!(gameService.Opponent | async)">
+        <p *ngSwitchCase="true">{{(gameService.Opponent | async)?.username}} selected</p>
+        <p *ngSwitchDefault>To issue a challenge, select an opponent (not you) from the list</p>
+    </ng-container>
+    <div>
+        <div>
+            <button [disabled]="!(gameService.Opponent | async)" (click)="issueChallenge()"
+                class="btn btn-primary">ISSUE
+                CHALLENGE!</button>
+        </div>
+    </div>
+    <div>
+        <label>Income Challenges:</label>
+        <button class="btn btn-link" (click)="showChallenge(challenger)"
+            *ngFor="let challenger of gameService.IncomingChallenges | async">
+            {{ challenger.username }}
+        </button>
+    </div>
+    <div class="form-group mt-1" style="width: 20rem;">
+        <label>Active Challenges</label>
+        <select class="form-control" [(ngModel)]="currentMatchId" (change)="getGameMoves()">
+            <option [value]="match.matchId" *ngFor="let match of gameService.ActiveMatches | async">
+                {{ match?.player?.username }}
+            </option>
+        </select>
+    </div>
+
+</div>
+<fieldset *ngIf="currentMatchId">
+    <legend *ngIf="!myPick">Choose Your Weapon</legend>
+    <legend *ngIf="myPick">You have picked {{ myPick }} awaiting opponent...</legend>
+    <div class="d-flex">
+        <div *ngIf="!myPick || myPick === 'rock'" class="border m-1 rock" (click)="sendMove('rock')">
+            <img src="../../../assets/5e9ce60fb1f47.png" />
+        </div>
+
+        <div *ngIf="!myPick || myPick === 'paper'" class="border m-1 paper" (click)="sendMove('paper')">
+            <img src="../../../assets/5e9ce60fb1f47.png" />
+        </div>
+
+        <div *ngIf="!myPick || myPick === 'scissors'" class="border m-1 scissors" (click)="sendMove('scissors')">
+            <img src="../../../assets/5e9ce60fb1f47.png" />
+        </div>
+    </div>
+</fieldset>

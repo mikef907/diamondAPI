@@ -1,0 +1,346 @@
+{
+	"info": {
+		"_postman_id": "fa4efa18-fecb-4b1a-a26f-920aa9e4ac65",
+		"name": "Identity CRUD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "https://localhost:44310/api/user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "258d9267-0356-48ee-b48c-768b167f6a52",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Set user ID\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.environment.set(\"userId\", jsonData.id);",
+							"});",
+							"",
+							"pm.test(\"Set user email\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.environment.set(\"useremail\", jsonData.email);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "82c981de-82d5-43b3-b2b1-0a32fa2dacc9",
+						"exec": [
+							"pm.globals.set(\"uid\", (Math.random() * 1000).toFixed(0));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstname\": \"test\",\n\t\"lastname\": \"test\",\n\t\"email\": \"test{{uid}}@test.com\",\n\t\"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44310/api/user",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"api",
+						"user"
+					]
+				},
+				"description": "Create User"
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/api/user/{{userId}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "be6cfe07-8015-4657-937c-8331268e4056",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44310/api/user/{{userId}}",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"api",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/api/user/authenticate",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "be6cfe07-8015-4657-937c-8331268e4056",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
+						"exec": [
+							"pm.test(\"Status code is 401\", function () {",
+							"    pm.response.to.have.status(401);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44310/api/user/authenticate",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"api",
+						"user",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/api/user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "be6cfe07-8015-4657-937c-8331268e4056",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44310/api/user",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44376/authenticate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6265732e-893b-4c7b-ba82-fdbd936fd0b8",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Set token var\", function () {",
+							"    var token = pm.response.text();",
+							"    pm.globals.set(\"jwt\", token);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\": \"test{{uid}}@test.com\",\n\t\"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44376/authenticate",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44376",
+					"path": [
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/api/protected",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "822744f9-29d7-4cb8-88fc-f2d232ddb6c7",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44310/api/user/protected",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"api",
+						"user",
+						"protected"
+					]
+				},
+				"description": "Read Users"
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/api/user/{{userId}}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bd56e4a6-0d48-4944-8aad-b25c70675876",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"id\": \"{{userId}}\",\n\t\"firstname\": \"testEdit\",\n\t\"lastname\": \"test\",\n\t\"email\": \"test@test.com\",\n\t\"password\": \"password\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44310/api/user/{{userId}}",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"api",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

@@ -1,0 +1,27 @@
+div.scissors, div.rock, div.paper {
+    height: 105px;
+    width: 102px;
+    overflow: hidden;
+    position: relative;
+}
+
+div.rock > img {
+    height: 198px;
+    position: absolute;
+    top: -16px;
+    right: 11px;
+}
+
+div.paper > img {
+    height: 177px;
+    position: absolute;
+    top: -87px;
+    right: -87px;
+}
+
+div.scissors > img {
+    height: 179px;
+    position: absolute;
+    top: 16px;
+    left: 2px;
+}

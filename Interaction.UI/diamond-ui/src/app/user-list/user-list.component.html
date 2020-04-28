@@ -1,0 +1,12 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">Active Players</h5>
+        <div class="card-text">
+            <ul class="list-group">
+                <li style="cursor: pointer;" class="list-group-item border-0" (click)="selectOpponent(player)"
+                    *ngFor="let player of gameService.ActivePlayers | async">
+                    {{ player.username }}</li>
+            </ul>
+        </div>
+    </div>
+</div>

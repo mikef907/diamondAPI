@@ -1,0 +1,48 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Diamond UI</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <div class="navbar-nav">
+      <a class="nav-item nav-link active" [routerLink]="['/rps']" routerLinkActive="active" href="#">RPS</a>
+      <ng-container *ngIf="identityService.User | async">
+        <span class="navbar-text">
+          Welcome {{ (identityService.User | async)?.firstname }}
+        </span>
+        <button (click)="logout()" class="btn btn-link">log out</button>
+      </ng-container>
+    </div>
+  </div>
+</nav>
+<div class="d-flex justify-content-around">
+  <app-user-list class="col-sm-2" *ngIf="gameService.Player | async"></app-user-list>
+  <div class="container">
+    <div [ngSwitch]="!!(identityService.User | async)">
+      <div *ngSwitchCase="true">
+        <div [ngSwitch]="!!(gameService.Player | async)">
+          <div *ngSwitchCase="true">
+            <router-outlet></router-outlet>
+          </div>
+          <div *ngSwitchDefault>
+            <form (submit)="createPlayer()">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input [(ngModel)]="username" class="form-control col-sm-4" name="username">
+                <small class="form-text text-muted">Enter a username to play!</small>
+              </div>
+              <button class="btn btn-primary">Submit</button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div *ngSwitchDefault>
+        <ng-container>
+          <app-create-user></app-create-user>
+          <app-login></app-login>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>
