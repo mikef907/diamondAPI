@@ -15,8 +15,8 @@ build:
   only:
   - master
   script:
-  - nuget restore Diamond.sln -Verbosity normal -NoCache
-  - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:minimal
+  - dotnet restore Diamond.sln --no-cache --verbosity quiet
+  - dotnet build Diamond.sln --configuration Release --verbosity minimal
 
 test:
   stage: test
@@ -27,9 +27,9 @@ test:
   only:
   - master
   script:
-  - nuget restore Diamond.sln -Verbosity quiet -NoCache
-  - msbuild /t:build Diamond.sln /p:Configuration=Release /verbosity:quiet
-  - dotnet test Common.LibTests
+  - dotnet restore Diamond.sln --no-cache --verbosity quiet
+  - dotnet build Diamond.sln --configuration Release --verbosity quiet
+  - dotnet test Common.LibTests\Common.LibTests.csproj --configuration Release
 
 deploy:
   stage: deploy
@@ -41,15 +41,13 @@ deploy:
   - master
   script:
   - set VERSION=2020.4.28.0
-  - nuget restore Diamond.sln -Verbosity quiet -NoCache
-  - msbuild /t:build Common.Lib\Common.Lib.csproj /p:Configuration=Release /verbosity:quiet
-  - msbuild /t:build Identity.Lib\Identity.Lib.csproj /p:Configuration=Release /verbosity:quiet
-  - msbuild /t:build STS.Lib\STS.Lib.csproj /p:Configuration=Release /verbosity:quiet
-  - msbuild /t:build Games.Lib\Games.Lib.csproj /p:Configuration=Release /verbosity:quiet
-  - msbuild /t:build Identity.Web\Identity.Web.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishProfile=FolderProfile /verbosity:quiet
-  - msbuild /t:build STS.Web\STS.Web.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishProfile=FolderProfile /verbosity:quiet
-  - msbuild /t:build Games.Web\Games.Web.csproj /p:Configuration=Release /p:DeployOnBuild=true /p:WebPublishMethod=FileSystem /p:PublishProfile=FolderProfile /verbosity:quiet
-  #- dotnet octo pack --id=ahfc.websvc.sandbox2 --version=%VERSION% --basePath=\bin\Release\publish --outFolder=.
-  - echo "*** PUBLISH .NET FRAMEWORK ASSEMBLIES ***"
-  - dotnet nuget push Arch(.NetFramework)\*.nupkg --api-key %NUGET_FEED_KEY% --source %NUGET_FEED_URL%
+  - dotnet restore Diamond.sln --no-cache --verbosity quiet
+  - dotnet build Diamond.sln --configuration Release --verbosity quiet
+  - dotnet publish Identity.Web\Identity.Web.csproj --output Identity.Web\bin\Release\netcoreapp3.1\publish --configuration Release
+  - dotnet publish STS.Web\STS.Web.csproj --output STS.Web\bin\Release\netcoreapp3.1\publish --configuration Release
+  - dotnet publish Games.Web\Games.Web.csproj --output Games.Web\bin\Release\netcoreapp3.1\publish --configuration Release
+  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Identity --version=%VERSION% --basePath=Identity.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
+  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Sts --version=%VERSION% --basePath=STS.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
+  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Games --version=%VERSION% --basePath=Games.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
+  #- dotnet nuget push *.nupkg --api-key %NUGET_FEED_KEY% --source %NUGET_FEED_URL%
   - set VERSION=
