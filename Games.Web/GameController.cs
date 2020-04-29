@@ -13,7 +13,7 @@ using DM = Common.Lib.Models.DM;
 namespace Games.Web
 {
     [Authorize]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class GameController : Controller
     {
         private IGenericUnitOfWork _uow;

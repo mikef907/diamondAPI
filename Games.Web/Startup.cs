@@ -28,6 +28,11 @@ namespace Games.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            // Setup typed access to app settings
+            var appSettingsSection = Configuration.GetSection("appSettings");
+            services.Configure<AppSettings>(appSettingsSection);
+            var appSettings = appSettingsSection.Get<AppSettings>();
+
             services.AddDbContext<DbContext, GamesContext>();
             services.AddTransient<IGenericUnitOfWork, GenericUnitOfWork>();
             services.AddSingleton(s => MapFactory.CreateGamesMapper());
@@ -35,17 +40,12 @@ namespace Games.Web
             builder =>
             {
                 builder.AllowAnyMethod().AllowAnyHeader()
-                       .WithOrigins("http://localhost:4200")
+                       .WithOrigins(appSettings.UIURL)
                        .AllowCredentials();
             }));
             services.AddSignalR();
             services.AddControllers();
 
-            // Setup typed access to app settings
-            var appSettingsSection = Configuration.GetSection("appSettings");
-            services.Configure<AppSettings>(appSettingsSection);
-
-            var appSettings = appSettingsSection.Get<AppSettings>();
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(config =>

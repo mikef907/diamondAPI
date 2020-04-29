@@ -54,7 +54,7 @@ namespace STS.Lib
             {
                 //TODO: Optimize~
                 http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(_stsToken));
-                var result = await http.PostAsync($"https://localhost:44310/api/user/authenticate", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
+                var result = await http.PostAsync($"{_appSettings.IdentityURL}user/authenticate", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
                 Guid? isAuthenticated = JsonConvert.DeserializeObject<Guid?>(await result.Content.ReadAsStringAsync());
                 if (isAuthenticated.HasValue)
                 {

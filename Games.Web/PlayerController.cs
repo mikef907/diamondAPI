@@ -12,7 +12,7 @@ using DM = Common.Lib.Models.DM;
 
 namespace Games.Web
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [Authorize]
     public class PlayerController : Controller
     {

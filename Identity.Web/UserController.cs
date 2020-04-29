@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace Identity.Web
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class UserController : Controller
     {
         private IGenericUnitOfWork _uow { get; set; }
