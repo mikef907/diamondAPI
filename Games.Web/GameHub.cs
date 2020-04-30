@@ -67,7 +67,7 @@ namespace Games.Web
 
         [Authorize]
         public async Task SendMove(Guid matchId, string move) {
-            var gameStateId = _uow.Repo<GameState>().SingleOrDefault(s => s.MatchId == matchId).Id;
+            var gameStateId = _uow.Repo<GameState>().Get(s => s.MatchId == matchId).Single().Id;
             var gamemove = GameFactory.CreateGameMove(gameStateId, Guid.Parse(Context.User.Identity.Name));
             gamemove.MoveData = JsonConvert.SerializeObject(move);
             _uow.Repo<GameMove>().Create(gamemove);
@@ -75,7 +75,7 @@ namespace Games.Web
 
             GameMove winner = null;
             if (new Engine(_uow).CheckState(matchId, out winner)) {
-                var players = _uow.Repo<PlayerMatch>().Where(m => m.MatchId == matchId).Select(p => p.PlayerId);
+                var players = _uow.Repo<PlayerMatch>().Get(m => m.MatchId == matchId).Select(p => p.PlayerId);
 
                 var match = _uow.Repo<Match>().Find(matchId);
                 match.WinnerId = winner?.Player.Id;

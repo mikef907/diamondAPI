@@ -40,7 +40,7 @@ namespace Identity.Web
         // GET api/<controller>/5
         [HttpPost("authenticate")]
         [Authorize(Policy = "STS")]
-        public Guid? PostAuthenticateUser([FromBody]DM.AuthenticateModel model) => _uow.Repo<EM.User>().Where(u => u.Email == model.Email && u.Password == model.Password).SingleOrDefault()?.Id;
+        public Guid? PostAuthenticateUser([FromBody]DM.AuthenticateModel model) => _uow.Repo<EM.User>().Get(u => u.Email == model.Email && u.Password == model.Password).SingleOrDefault()?.Id;
 
         // POST api/<controller>
         [HttpPost]

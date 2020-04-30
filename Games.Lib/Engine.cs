@@ -1,5 +1,6 @@
 ﻿using Common.Lib.DataAccess;
 using Common.Lib.Models.EM;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace Games.Lib
         private IGenericUnitOfWork _uow { get; set; }
         public Engine(IGenericUnitOfWork uow) => this._uow = uow;
         public bool CheckState(Guid matchId, out GameMove winner) {
-            var state = _uow.Repo<GameState>().Where(m => m.Moves, m => m.MatchId == matchId).SingleOrDefault();
+            var state = _uow.Repo<GameState>().Get(m => m.Include(x => x.Moves), m => m.MatchId == matchId).SingleOrDefault();
             
             winner = null;
 

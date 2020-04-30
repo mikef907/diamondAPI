@@ -1,5 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore.Query;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Common.Lib.DataAccess
@@ -13,11 +15,16 @@ namespace Common.Lib.DataAccess
         T Create(T entity);
         void Delete(object id);
         T Find(object id);
-        IEnumerable<T> Get();
         void Update(T entity);
-        T SingleOrDefault(Func<T, bool> func);
-        IEnumerable<T> Where(Func<T, bool> func);
-        IEnumerable<T> Where(Expression<Func<T, object>> includes, Func<T, bool> predicate);
-        IEnumerable<T> Where(IEnumerable<Expression<Func<T, object>>> includes, Func<T, bool> predicate);
+        IEnumerable<T> Get();
+        IEnumerable<T> Get(Expression<Func<T, bool>> predicate, bool disableTracking = true);
+        IEnumerable<T> Get(List<Func<IQueryable<T>, IIncludableQueryable<T, object>>> includes = null,
+                          Expression<Func<T, bool>> predicate = null,
+                          Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+                          bool disableTracking = true);
+        IEnumerable<T> Get(Func<IQueryable<T>, IIncludableQueryable<T, object>> include = null,
+                          Expression<Func<T, bool>> predicate = null,
+                          Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
+                          bool disableTracking = true);
     }
 }
