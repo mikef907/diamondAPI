@@ -33,8 +33,8 @@ namespace Games.Web
             services.Configure<AppSettings>(appSettingsSection);
             var appSettings = appSettingsSection.Get<AppSettings>();
 
-            services.AddDbContext<DbContext, GamesContext>();
-            services.AddTransient<IGenericUnitOfWork, GenericUnitOfWork>();
+            services.AddDbContext<GamesContext>(options => SqliteInMemory.ConfigBuilder<GamesContext>(options));
+            services.AddTransient<IGenericUnitOfWork, GenericUnitOfWork>(services => new GenericUnitOfWork(services.GetRequiredService<GamesContext>()));
             services.AddSingleton(s => MapFactory.CreateGamesMapper());
             services.AddCors(options => options.AddPolicy("CorsPolicy",
             builder =>
@@ -86,12 +86,14 @@ namespace Games.Web
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, GamesContext context)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            context.Database.EnsureCreated();
 
             app.UseRouting();
 

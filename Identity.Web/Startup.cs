@@ -23,8 +23,8 @@ namespace Identity.Web
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DbContext, IdentityContext>();
-            services.AddTransient<IGenericUnitOfWork, GenericUnitOfWork>();
+            services.AddDbContext<IdentityContext>(options => SqliteInMemory.ConfigBuilder<IdentityContext>(options));
+            services.AddTransient<IGenericUnitOfWork, GenericUnitOfWork>(options => new GenericUnitOfWork(options.GetRequiredService<IdentityContext>()));
             services.AddSingleton(s => MapFactory.CreateIdentityMapper());
             services.AddControllers();
             services.AddCors();
@@ -84,6 +84,7 @@ namespace Identity.Web
 
                 endpoints.MapControllers();
             });
+
         }
     }
 }

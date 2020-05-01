@@ -5,17 +5,7 @@ namespace Games.Lib
 {
     public class GamesContext : DbContext
     {
-        public GamesContext()
-        {
-
-        }
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseInMemoryDatabase("Games");
-            optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseLazyLoadingProxies(false);
-            base.OnConfiguring(optionsBuilder);
-        }
+        public GamesContext(DbContextOptions options) : base(options) { }
         public DbSet<Player> Players { get; set; }
         public DbSet<Match> Matches { get; set; }
         public DbSet<GameState> GameStates { get; set; }

@@ -22,8 +22,8 @@ namespace Identity.Web
 
             using (var scope = host.Services.CreateScope()) {
                 var services = scope.ServiceProvider;
-                var context = services.GetRequiredService<DbContext>();
-                Seed(context as IdentityContext);
+                var context = services.GetRequiredService<IdentityContext>();
+                Seed(context);
             }
 
             host.Run();
@@ -37,6 +37,8 @@ namespace Identity.Web
                 });
 
         private static void Seed(IdentityContext context) {
+            context.Database.EnsureCreated();
+
             context.Users.Add(new User()
             {
                 Email = "mikef907@gmail.com",
