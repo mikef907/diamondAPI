@@ -18,10 +18,12 @@ namespace Games.Web
         private static List<Player> _activePlayers { get; set; } = new List<Player>();
         private IGenericUnitOfWork _uow;
         private IMapper _mapper;
+        private GameEngine _engine;
         public GameHub(IGenericUnitOfWork uow, IMapper mapper)
         {
             _uow = uow;
             _mapper = mapper;
+            _engine = GameFactory.CreateGameEngine(uow);
         }
 
         [Authorize]
@@ -29,9 +31,6 @@ namespace Games.Web
         {
             var player = _uow.Repo<Player>().Find(Guid.Parse(Context.User.Identity.Name));
             player.ConnectionId = Context.ConnectionId;
-            // I don't thin this actually needs to be saved since it changes with every session
-            //_uow.Commit();
-
             if (!_activePlayers.Any(p => p.Id == player.Id))
                 _activePlayers.Add(player);
             else {
@@ -72,9 +71,8 @@ namespace Games.Web
             gamemove.MoveData = JsonConvert.SerializeObject(move);
             _uow.Repo<GameMove>().Create(gamemove);
             
-
             GameMove winner = null;
-            if (new Engine(_uow).CheckState(matchId, out winner)) {
+            if (_engine.CheckState(matchId, out winner)) {
                 var players = _uow.Repo<PlayerMatch>().Get(m => m.MatchId == matchId).Select(p => p.PlayerId);
 
                 var match = _uow.Repo<Match>().Find(matchId);

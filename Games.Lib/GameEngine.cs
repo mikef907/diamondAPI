@@ -7,12 +7,12 @@ using System.Linq;
 
 namespace Games.Lib
 {
-    public class Engine
+    public class GameEngine
     {
         private IGenericUnitOfWork _uow { get; set; }
-        public Engine(IGenericUnitOfWork uow) => this._uow = uow;
+        public GameEngine(IGenericUnitOfWork uow) => this._uow = uow;
         public bool CheckState(Guid matchId, out GameMove winner) {
-            var state = _uow.Repo<GameState>().Get(m => m.Include(x => x.Moves), m => m.MatchId == matchId).SingleOrDefault();
+            var state = _uow.Repo<GameState>().Get(m => m.Include(x => x.Moves), m => m.MatchId == matchId, null, false).SingleOrDefault();
             
             winner = null;
 

@@ -40,20 +40,9 @@ namespace Games.Web
         [HttpGet("matches")]
         public IEnumerable<DM.PlayerMatch> GetPlayerMatches() {
             var userId = Guid.Parse(User.Identity.Name);
-
-            var includes = new List<Func<IQueryable<Match>, IIncludableQueryable<Match, object>>>()
-            {
-                p => p.Include(p => p.PlayerMatches)
-            };
-            var matches = _uow.Repo<Match>()
-               .Get(p => p.Include(p => p.PlayerMatches).ThenInclude(p => p.Player), p => !p.Finished && p.PlayerMatches.Any(pm => pm.PlayerId == userId));
-
-
-
-            //var pMatches = matches.SelectMany(m => m.PlayerMatches.Where(p => p.PlayerId != userId));
-
-            //pMatches.ToList().ForEach(pm => _uow.Repo<PlayerMatch>().Reference(pm, pm => pm.Player));
-
+            var matches = _uow.Repo<PlayerMatch>()
+               .Get(p => p.Include(p => p.Player), p => !p.Match.Finished 
+                    && p.Match.PlayerMatches.Any(p => p.PlayerId == userId) && p.PlayerId != userId);
             return _mapper.Map<IEnumerable<DM.PlayerMatch>>(matches);
         }
 

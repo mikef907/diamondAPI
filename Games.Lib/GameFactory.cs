@@ -1,4 +1,5 @@
-﻿using Common.Lib.Models.EM;
+﻿using Common.Lib.DataAccess;
+using Common.Lib.Models.EM;
 using Common.Lib.Models.Primitives;
 using System;
 
@@ -12,5 +13,7 @@ namespace Games.Lib
 
         public static GameMove CreateGameMove(Guid gameStateId, Guid playerId) =>
             new GameMove() { GameStateId = gameStateId, PlayerId = playerId };
+
+        public static GameEngine CreateGameEngine(IGenericUnitOfWork uow) => new GameEngine(uow);
     }
 }
