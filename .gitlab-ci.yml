@@ -40,7 +40,7 @@ deploy:
   only:
   - master
   script:
-  - set VERSION=2020.5.1.0
+  - set VERSION=2020.5.1.1
   - dotnet restore Diamond.sln --no-cache --verbosity quiet
   - dotnet build Diamond.sln --configuration Release --verbosity quiet
   - dotnet publish Identity.Web\Identity.Web.csproj --output Identity.Web\bin\Release\netcoreapp3.1\publish --configuration Release

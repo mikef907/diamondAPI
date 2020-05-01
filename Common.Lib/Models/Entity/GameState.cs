@@ -12,7 +12,7 @@ namespace Common.Lib.Models.EM
         public Guid Id { get; set; }
         public int TurnNumber { get; set; }
         public Player CurrentTurn { get; set; }
-        public Guid CurrentTurnId { get; set; }
+        public Guid? CurrentTurnId { get; set; }
         public List<GameMove> Moves { get; set; }
         public Guid MatchId { get; set;}
         public Match Match { get; set; }
