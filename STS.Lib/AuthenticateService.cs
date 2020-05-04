@@ -20,10 +20,10 @@ namespace STS.Lib
     {
         private AppSettings _appSettings;
 
-        private IdentityAgent _identityAgent;
+        private IIdentityAgent _identityAgent;
         private JwtSecurityTokenHandler _tokenHandler { get; set; } = new JwtSecurityTokenHandler();
         private static SecurityToken _stsToken { get; set; }
-        public AuthenticateService(IOptions<AppSettings> appSettings, IdentityAgent identityAgent)
+        public AuthenticateService(IOptions<AppSettings> appSettings, IIdentityAgent identityAgent)
         {
             _appSettings = appSettings.Value;
             _identityAgent = identityAgent;

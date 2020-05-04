@@ -10,16 +10,9 @@ using System.Threading.Tasks;
 
 namespace Common.Lib.ServiceAgent
 {
-    public class IdentityAgent : IServiceAgent
+    public class IdentityAgent : ServiceAgent, IIdentityAgent
     {
-        private static SecurityToken _stsToken;
-
-        private AppSettings _appSettings;
-        private JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
-
-        public IdentityAgent(IOptions<AppSettings> appSettings) => _appSettings = appSettings.Value;
-        
-        public bool HasValidToken() => _stsToken != null && _stsToken.ValidTo > DateTime.Now;
+        public IdentityAgent(IOptions<AppSettings> appSettings) : base(appSettings) { }
 
         /// <summary>
         /// This method will be used by the STS to check against Identity for user authentication, given that it makes sense that this will have

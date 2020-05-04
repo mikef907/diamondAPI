@@ -36,9 +36,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitlab-ci.yml = .gitlab-ci.yml
 		build.cmd = build.cmd
 		clean.cmd = clean.cmd
+		Identity CRUD.postman_collection.json = Identity CRUD.postman_collection.json
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Games.WebTests", "Games.WebTests\Games.WebTests.csproj", "{F3EC8CBF-3784-4D72-AC23-758ACDFE6676}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Games.WebTests", "Games.WebTests\Games.WebTests.csproj", "{F3EC8CBF-3784-4D72-AC23-758ACDFE6676}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

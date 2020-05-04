@@ -23,7 +23,7 @@ namespace STS.Web
             var appSettingsSection = Configuration.GetSection("appSettings");
             services.Configure<AppSettings>(appSettingsSection);
             services.AddControllers();
-            services.AddScoped<IdentityAgent>();
+            services.AddScoped<IIdentityAgent, IdentityAgent>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddCors();
         }
