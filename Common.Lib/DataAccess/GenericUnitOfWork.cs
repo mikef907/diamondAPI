@@ -16,8 +16,9 @@ namespace Common.Lib.DataAccess
 
         public IGenericRepository<T> Repo<T>() where T : class
         {
-            if (!_repos.ContainsKey(typeof(T))) _repos.Add(typeof(T), new GenericRepository<T>(_context));
-            return _repos[typeof(T)] as GenericRepository<T>;
+            var type = typeof(T);
+            if (!_repos.ContainsKey(type)) _repos.Add(type, new GenericRepository<T>(_context));
+            return _repos[type] as GenericRepository<T>;
         }
 
         public int Commit() => _context.SaveChanges();
