@@ -6,7 +6,7 @@
 	},
 	"item": [
 		{
-			"name": "https://localhost:44310/api/user",
+			"name": "https://localhost:44310/user",
 			"event": [
 				{
 					"listen": "test",
@@ -54,14 +54,13 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:44310/api/user",
+					"raw": "https://localhost:44310/user",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"api",
 						"user"
 					]
 				},
@@ -70,7 +69,7 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/api/user/{{userId}",
+			"name": "https://localhost:44310/user/{{userId}",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -99,14 +98,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:44310/api/user/{{userId}}",
+					"raw": "https://localhost:44310/user/{{userId}}",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"api",
 						"user",
 						"{{userId}}"
 					]
@@ -115,7 +113,7 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/api/user/authenticate",
+			"name": "https://localhost:44310/user/authenticate",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -144,14 +142,13 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:44310/api/user/authenticate",
+					"raw": "https://localhost:44310/user/authenticate",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"api",
 						"user",
 						"authenticate"
 					]
@@ -160,7 +157,7 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/api/user",
+			"name": "https://localhost:44310/user",
 			"event": [
 				{
 					"listen": "prerequest",
@@ -189,14 +186,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:44310/api/user",
+					"raw": "https://localhost:44310/user",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"api",
 						"user"
 					]
 				}
@@ -252,7 +248,7 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/api/protected",
+			"name": "https://localhost:44310/protected",
 			"event": [
 				{
 					"listen": "test",
@@ -281,14 +277,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:44310/api/user/protected",
+					"raw": "https://localhost:44310/user/protected",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"api",
 						"user",
 						"protected"
 					]
@@ -298,7 +293,7 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/api/user/{{userId}}",
+			"name": "https://localhost:44310/user/{{userId}}",
 			"event": [
 				{
 					"listen": "test",
@@ -326,14 +321,13 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:44310/api/user/{{userId}}",
+					"raw": "https://localhost:44310/user/{{userId}}",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"api",
 						"user",
 						"{{userId}}"
 					]
