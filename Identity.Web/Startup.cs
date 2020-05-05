@@ -60,8 +60,10 @@ namespace Identity.Web
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudiences = new[] { "STS Self", "Diamond" },
+                    ValidIssuer = "STS"
                 };
             });
         }

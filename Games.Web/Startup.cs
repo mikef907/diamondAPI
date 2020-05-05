@@ -66,8 +66,11 @@ namespace Games.Web
                 {
                     ValidateIssuerSigningKey = true,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
-                    ValidateIssuer = false,
-                    ValidateAudience = false
+                    ValidateIssuer = true,
+                    ValidIssuer = "STS",
+                    ValidateAudience = true,
+                    ValidAudiences = new[] { "Diamond" },
+                    ValidateLifetime = true
                 };
 
                 config.Events = new JwtBearerEvents

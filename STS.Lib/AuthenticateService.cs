@@ -46,6 +46,8 @@ namespace STS.Lib
                     {
                             new Claim(ClaimTypes.Name, userId.Value.ToString())
                     }),
+                    Issuer = "STS",
+                    Audience = "Diamond",
                     Expires = DateTime.UtcNow.AddDays(7),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
@@ -69,6 +71,8 @@ namespace STS.Lib
                             new Claim("STS", "true")
                     }),
                 Expires = DateTime.UtcNow.AddDays(7),
+                Issuer = "STS",
+                Audience = "STS Self",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
 
