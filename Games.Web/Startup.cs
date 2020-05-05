@@ -17,6 +17,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
+using Microsoft.OpenApi.Models;
 
 namespace Games.Web
 {
@@ -45,6 +46,10 @@ namespace Games.Web
             }));
             services.AddSignalR();
             services.AddControllers();
+            services.AddSwaggerGen(options =>
+            {
+                options.SwaggerDoc("v1", new OpenApiInfo { Title = "Games API", Version = "v1" });
+            });
 
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
@@ -101,6 +106,11 @@ namespace Games.Web
 
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "Games API V1");
+            });
 
             app.UseEndpoints(endpoints =>
             {
