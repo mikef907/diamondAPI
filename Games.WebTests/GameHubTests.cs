@@ -4,15 +4,14 @@ using Common.Lib.Models;
 using Common.Lib.Models.EM;
 using Games.Lib;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Xunit;
 
 namespace Games.Web.Tests
 {
-    [TestClass()]
     public class GameHubTests
     {
         private IGenericUnitOfWork _uow;
@@ -24,7 +23,7 @@ namespace Games.Web.Tests
             _uow = new GenericUnitOfWork(_context);
         }
 
-        [TestMethod()]
+        [Fact]
         public async Task RespondToChallengeTest()
         {
             var hub = new GameHub(_uow, _mapper);
@@ -51,13 +50,13 @@ namespace Games.Web.Tests
 
             var playerMatches = _uow.Repo<PlayerMatch>().Get();
 
-            Assert.AreEqual(2, playerMatches.Count());
-            Assert.IsNotNull(playerMatches.Single(p => p.PlayerId == p1.Id));
-            Assert.IsNotNull(playerMatches.Single(p => p.PlayerId == p2.Id));
+            Assert.Equal(2, playerMatches.Count());
+            Assert.NotNull(playerMatches.Single(p => p.PlayerId == p1.Id));
+            Assert.NotNull(playerMatches.Single(p => p.PlayerId == p2.Id));
 
             var matchId = playerMatches.First().MatchId;
 
-            Assert.IsTrue(playerMatches.All(p => p.MatchId == matchId));
+            Assert.True(playerMatches.All(p => p.MatchId == matchId));
         }
 
         private ClaimsPrincipal CreateClaimsPrincipalFromPlayer(Player player) {
