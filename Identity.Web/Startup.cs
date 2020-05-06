@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Text;
 
 namespace Identity.Web
@@ -62,8 +63,11 @@ namespace Identity.Web
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudiences = new[] { "STS Self", "Diamond" },
-                    ValidIssuer = "STS"
+                    ValidAudiences = new[] { "Token Service", "Users" },
+                    ValidIssuer = "STS",
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    RequireExpirationTime = true
                 };
             });
         }

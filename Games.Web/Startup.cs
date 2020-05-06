@@ -69,8 +69,10 @@ namespace Games.Web
                     ValidateIssuer = true,
                     ValidIssuer = "STS",
                     ValidateAudience = true,
-                    ValidAudiences = new[] { "Diamond" },
-                    ValidateLifetime = true
+                    ValidAudiences = new[] { "Users" },
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    RequireExpirationTime = true
                 };
 
                 config.Events = new JwtBearerEvents

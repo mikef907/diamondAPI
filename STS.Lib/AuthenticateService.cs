@@ -5,7 +5,9 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,7 +15,8 @@ namespace STS.Lib
 {
     public interface IAuthenticateService
     {
-        Task<string> Authenticate(AuthenticateModel model);
+        Task<AuthenticationModel> Authenticate(AuthenticateModel model);
+        Task<AuthenticationModel> ConsumeRefreshToken(AuthenticationModel model);
     }
 
     public class AuthenticateService : IAuthenticateService
@@ -29,30 +32,22 @@ namespace STS.Lib
             _identityAgent = identityAgent;
             if (_stsToken == null || _stsToken.ValidTo > DateTime.Now)
             {
-                CreateToken();
+                CreateSTSToken();
             }
         }
 
-        public async Task<string> Authenticate(AuthenticateModel model)
+        public async Task<AuthenticationModel> Authenticate(AuthenticateModel model)
         {
             Guid? userId = await _identityAgent.Authenticate(model, _stsToken);
 
             if (userId.HasValue)
             {
-                var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-                var tokenDescriptor = new SecurityTokenDescriptor
-                {
-                    Subject = new ClaimsIdentity(new Claim[]
-                    {
-                            new Claim(ClaimTypes.Name, userId.Value.ToString())
-                    }),
-                    Issuer = "STS",
-                    Audience = "Diamond",
-                    Expires = DateTime.UtcNow.AddDays(7),
-                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-                };
-                var token = _tokenHandler.CreateToken(tokenDescriptor);
-                return _tokenHandler.WriteToken(token);
+                var token = CreateUserToken(userId.Value);
+                var refreshToken = GenerateRefreshToken(token as JwtSecurityToken);
+
+                await _identityAgent.CreateRefreshToken(refreshToken, _stsToken);
+
+                return new AuthenticationModel() { Token = _tokenHandler.WriteToken(token), RefreshToken =  refreshToken.Token};
             }
             else
             {
@@ -61,7 +56,31 @@ namespace STS.Lib
             }
         }
 
-        private void CreateToken()
+        public async Task<AuthenticationModel> ConsumeRefreshToken(AuthenticationModel model) {
+            var claimsPrincipal = GetPrincipalFromExpiredToken(model.Token);
+
+            Guid userId = Guid.Parse(claimsPrincipal.Identity.Name);
+            Guid jti = Guid.Parse(claimsPrincipal.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
+
+            var currentRefreshToken = await _identityAgent.FetchRefreshToken(userId, jti, _stsToken);
+
+            // TODO: Explore just not returning a token from identity if some of these conditions are not true?
+            if (currentRefreshToken != null && currentRefreshToken.Valid && currentRefreshToken.InUse && currentRefreshToken.Expiry > DateTime.UtcNow && currentRefreshToken.Token == model.RefreshToken)
+            {
+                var newToken = CreateUserToken(userId);
+                var newRefreshToken = GenerateRefreshToken(newToken as JwtSecurityToken);
+
+                await _identityAgent.RemoveRefreshToken(model.RefreshToken, _stsToken);
+                await _identityAgent.CreateRefreshToken(newRefreshToken, _stsToken);
+
+                return new AuthenticationModel() { Token = _tokenHandler.WriteToken(newToken), RefreshToken = newRefreshToken.Token };
+            }
+            else {
+                return null;
+            }
+        }
+
+        private void CreateSTSToken()
         {
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
             _stsToken = _tokenHandler.CreateToken(new SecurityTokenDescriptor
@@ -70,12 +89,76 @@ namespace STS.Lib
                     {
                             new Claim("STS", "true")
                     }),
-                Expires = DateTime.UtcNow.AddDays(7),
+                Expires = DateTime.UtcNow.AddDays(1),
+                NotBefore = DateTime.UtcNow,
                 Issuer = "STS",
-                Audience = "STS Self",
+                Audience = "Token Service",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             });
 
+        }
+
+        private SecurityToken CreateUserToken(Guid userId)
+        {
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new Claim(ClaimTypes.Name, userId.ToString()),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                }),
+                Issuer = "STS",
+                Audience = "Users",
+                Expires = DateTime.UtcNow.AddSeconds(30),
+                NotBefore = DateTime.UtcNow,
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            return _tokenHandler.CreateToken(tokenDescriptor);
+        }
+
+        private RefreshToken GenerateRefreshToken(JwtSecurityToken token)
+        {
+            var randomNumber = new byte[32];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomNumber);
+
+                // TODO: Add Client IP
+                return new RefreshToken()
+                {
+                    Token = Convert.ToBase64String(randomNumber),
+                    JwtId = Guid.Parse(token.Id),
+                    UserId = Guid.Parse(token.Claims.Single(c => c.Type == JwtRegisteredClaimNames.UniqueName).Value),
+                    Valid = true,
+                    InUse = true,
+                    Expiry = DateTime.UtcNow.AddDays(10),
+                };
+            }
+        }
+
+        private ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
+        {
+            var tokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_appSettings.Secret)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudiences = new[] { "Users" },
+                ValidIssuer = "STS",
+                ValidateLifetime = false,
+                RequireExpirationTime = true
+            };
+
+            SecurityToken securityToken;
+            var principal = _tokenHandler.ValidateToken(token, tokenValidationParameters, out securityToken);
+            var jwtSecurityToken = securityToken as JwtSecurityToken;
+
+            if (jwtSecurityToken == null || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                throw new SecurityTokenException("Invalid token");
+
+            return principal;
         }
     }
 }

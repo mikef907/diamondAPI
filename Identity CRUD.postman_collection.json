@@ -142,14 +142,14 @@
 				"method": "POST",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:44310/user/authenticate",
+					"raw": "https://localhost:44310/token/authenticate",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44310",
 					"path": [
-						"user",
+						"token",
 						"authenticate"
 					]
 				}
@@ -205,16 +205,19 @@
 				{
 					"listen": "test",
 					"script": {
-						"id": "6265732e-893b-4c7b-ba82-fdbd936fd0b8",
+						"id": "623d076b-133a-425d-b969-8d26c6616e65",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
 							"",
 							"pm.test(\"Set token var\", function () {",
-							"    var token = pm.response.text();",
-							"    pm.globals.set(\"jwt\", token);",
+							"    var result = pm.response.json();",
+							"    ",
+							"    pm.globals.set(\"jwt\", result.token);",
+							"    pm.globals.set(\"refresh\", result.refreshToken)",
 							"});",
+							"",
 							""
 						],
 						"type": "text/javascript"
@@ -330,6 +333,34 @@
 					"path": [
 						"user",
 						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44376/refresh",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"token\" : \"{{jwt}}\",\n\t\"refreshToken\" : \"{{refresh}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://localhost:44376/refresh",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44376",
+					"path": [
+						"refresh"
 					]
 				}
 			},

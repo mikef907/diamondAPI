@@ -26,8 +26,35 @@ namespace Common.Lib.ServiceAgent
             using (var http = new HttpClient())
             {
                 http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
-                var result = await http.PostAsync($"{_appSettings.IdentityURL}user/authenticate", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
+                var result = await http.PostAsync($"{_appSettings.IdentityURL}token/authenticate", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
                 return JsonConvert.DeserializeObject<Guid?>(await result.Content.ReadAsStringAsync());
+            }
+        }
+
+        public async Task CreateRefreshToken(RefreshToken model, SecurityToken stsToken)
+        {
+            using (var http = new HttpClient())
+            {
+                http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
+                await http.PostAsync($"{_appSettings.IdentityURL}token/refresh", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
+            }
+        }
+
+        public async Task<RefreshToken> FetchRefreshToken(Guid userId, Guid jti, SecurityToken stsToken) 
+        {
+            using (var http = new HttpClient())
+            {
+                http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
+                var result = await http.GetAsync($"{_appSettings.IdentityURL}token/refresh/{userId}/{jti}");
+                return JsonConvert.DeserializeObject<RefreshToken>(await result.Content.ReadAsStringAsync());
+            }
+        }
+
+        public async Task RemoveRefreshToken(string token, SecurityToken stsToken) {
+            using (var http = new HttpClient())
+            {
+                http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
+                await http.DeleteAsync($"{_appSettings.IdentityURL}token/refresh/{token}");
             }
         }
     }

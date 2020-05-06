@@ -18,6 +18,8 @@ namespace Common.Lib.Models
                 cfg.CreateMap<EM.User, DM.User>()
                     .ForMember(e => e.Password, o => o.Ignore());
 
+                cfg.CreateMap<EM.RefreshToken, DM.RefreshToken>().ReverseMap();
+
                 cfg.CreateMap<EM.User, DM.AuthenticateModel>();
             });
 
