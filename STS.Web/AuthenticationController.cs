@@ -7,24 +7,26 @@ using System.Threading.Tasks;
 
 namespace STS.Web
 {
-    
+
     public class AuthenticationController : Controller
     {
         private IAuthenticateService _service { get; set; }
         public AuthenticationController(IAuthenticateService service) => _service = service;
 
-        [HttpPost("authenticate")]
-        public async Task<IActionResult> PostAuthentication([FromBody]AuthenticateModel model) {
-            var authentication = await _service.Authenticate(model);
-            if (authentication == null) return BadRequest();
-            else return Ok(authentication);
+        [HttpPost("access-token")]
+        public async Task<IActionResult> PostAuthentication([FromForm]AccessTokenRequest model)
+        {
+            var accessToken = await _service.GrantAccessToken(model);
+            if (accessToken == null) return BadRequest();
+            else return Ok(accessToken);
         }
 
-        [HttpPost("refresh")]
-        public async Task<IActionResult> PostRefreshToken([FromBody]AuthenticationModel model) {
-            var authentication = await _service.ConsumeRefreshToken(model);
-            if (authentication == null) return BadRequest();
-            else return Ok(authentication);
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> PostRefreshToken([FromForm]RefreshTokenRequest model) 
+        {
+            var accessToken = await _service.ConsumeRefreshToken(model);
+            if (accessToken == null) return BadRequest();
+            else return Ok(accessToken);
         }
     }
 }

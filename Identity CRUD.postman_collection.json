@@ -200,7 +200,7 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44376/authenticate",
+			"name": "https://localhost:44376/access-token",
 			"event": [
 				{
 					"listen": "test",
@@ -214,8 +214,8 @@
 							"pm.test(\"Set token var\", function () {",
 							"    var result = pm.response.json();",
 							"    ",
-							"    pm.globals.set(\"jwt\", result.token);",
-							"    pm.globals.set(\"refresh\", result.refreshToken)",
+							"    pm.globals.set(\"jwt\", result.access_Token);",
+							"    pm.globals.set(\"refresh\", result.refresh_Token)",
 							"});",
 							"",
 							""
@@ -228,8 +228,24 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"email\": \"test{{uid}}@test.com\",\n\t\"password\": \"password\"\n}",
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "username",
+							"value": "test{{uid}}@test.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -237,14 +253,14 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:44376/authenticate",
+					"raw": "https://localhost:44376/access-token",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44376",
 					"path": [
-						"authenticate"
+						"access-token"
 					]
 				}
 			},
@@ -340,12 +356,54 @@
 		},
 		{
 			"name": "https://localhost:44376/refresh",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "47e026e8-3f30-4601-ad22-656605a1851b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Set token var\", function () {",
+							"    var result = pm.response.json();",
+							"    ",
+							"    pm.globals.set(\"jwt\", result.access_Token);",
+							"    pm.globals.set(\"refresh\", result.refresh_Token)",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "{\n\t\"token\" : \"{{jwt}}\",\n\t\"refreshToken\" : \"{{refresh}}\"\n}",
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "refresh_token",
+							"type": "text"
+						},
+						{
+							"key": "refresh_token",
+							"value": "{{refresh}}",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{jwt}}",
+							"type": "text"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -353,14 +411,14 @@
 					}
 				},
 				"url": {
-					"raw": "https://localhost:44376/refresh",
+					"raw": "https://localhost:44376/refresh-token",
 					"protocol": "https",
 					"host": [
 						"localhost"
 					],
 					"port": "44376",
 					"path": [
-						"refresh"
+						"refresh-token"
 					]
 				}
 			},

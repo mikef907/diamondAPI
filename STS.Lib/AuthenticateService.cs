@@ -15,8 +15,8 @@ namespace STS.Lib
 {
     public interface IAuthenticateService
     {
-        Task<AuthenticationModel> Authenticate(AuthenticateModel model);
-        Task<AuthenticationModel> ConsumeRefreshToken(AuthenticationModel model);
+        Task<AccessTokenResponse> GrantAccessToken(AccessTokenRequest model);
+        Task<AccessTokenResponse> ConsumeRefreshToken(RefreshTokenRequest model);
     }
 
     public class AuthenticateService : IAuthenticateService
@@ -36,9 +36,15 @@ namespace STS.Lib
             }
         }
 
-        public async Task<AuthenticationModel> Authenticate(AuthenticateModel model)
+        public async Task<AccessTokenResponse> GrantAccessToken(AccessTokenRequest model)
         {
-            Guid? userId = await _identityAgent.Authenticate(model, _stsToken);
+            var authModel = new AuthenticateModel()
+            {
+                Email = model.Username,
+                Password = model.Password
+            };
+
+            Guid? userId = await _identityAgent.Authenticate(authModel, _stsToken);
 
             if (userId.HasValue)
             {
@@ -47,7 +53,12 @@ namespace STS.Lib
 
                 await _identityAgent.CreateRefreshToken(refreshToken, _stsToken);
 
-                return new AuthenticationModel() { Token = _tokenHandler.WriteToken(token), RefreshToken =  refreshToken.Token};
+                return new AccessTokenResponse()
+                {
+                    Token_Type = "bearer",
+                    Access_Token = _tokenHandler.WriteToken(token),
+                    Refresh_Token = refreshToken.Token
+                };
             }
             else
             {
@@ -56,8 +67,8 @@ namespace STS.Lib
             }
         }
 
-        public async Task<AuthenticationModel> ConsumeRefreshToken(AuthenticationModel model) {
-            var claimsPrincipal = GetPrincipalFromExpiredToken(model.Token);
+        public async Task<AccessTokenResponse> ConsumeRefreshToken(RefreshTokenRequest model) {
+            var claimsPrincipal = GetPrincipalFromExpiredToken(model.Client_Secret);
 
             Guid userId = Guid.Parse(claimsPrincipal.Identity.Name);
             Guid jti = Guid.Parse(claimsPrincipal.Claims.Single(c => c.Type == JwtRegisteredClaimNames.Jti).Value);
@@ -65,15 +76,21 @@ namespace STS.Lib
             var currentRefreshToken = await _identityAgent.FetchRefreshToken(userId, jti, _stsToken);
 
             // TODO: Explore just not returning a token from identity if some of these conditions are not true?
-            if (currentRefreshToken != null && currentRefreshToken.Valid && currentRefreshToken.InUse && currentRefreshToken.Expiry > DateTime.UtcNow && currentRefreshToken.Token == model.RefreshToken)
+            if (currentRefreshToken != null && currentRefreshToken.Valid && currentRefreshToken.InUse 
+                && currentRefreshToken.Expiry > DateTime.UtcNow && currentRefreshToken.Token == model.Refresh_Token)
             {
                 var newToken = CreateUserToken(userId);
                 var newRefreshToken = GenerateRefreshToken(newToken as JwtSecurityToken);
 
-                await _identityAgent.RemoveRefreshToken(model.RefreshToken, _stsToken);
+                await _identityAgent.RemoveRefreshToken(model.Refresh_Token, _stsToken);
                 await _identityAgent.CreateRefreshToken(newRefreshToken, _stsToken);
 
-                return new AuthenticationModel() { Token = _tokenHandler.WriteToken(newToken), RefreshToken = newRefreshToken.Token };
+                return new AccessTokenResponse() 
+                { 
+                    Token_Type = "bearer",
+                    Access_Token = _tokenHandler.WriteToken(newToken), 
+                    Refresh_Token = newRefreshToken.Token 
+                };
             }
             else {
                 return null;
