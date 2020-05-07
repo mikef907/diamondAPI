@@ -1,4 +1,5 @@
 ﻿using Common.Lib.Models.DM;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -11,7 +12,7 @@ namespace Common.Lib.ServiceAgent
 {
     public class IdentityAgent : ServiceAgent, IIdentityAgent
     {
-        public IdentityAgent(IOptions<AppSettings> appSettings) : base(appSettings) { }
+        public IdentityAgent(IOptions<AppSettings> appSettings, IHttpContextAccessor context) : base(appSettings, context) { }
 
         /// <summary>
         /// This method will be used by the STS to check against Identity for user authentication, given that it makes sense that this will have

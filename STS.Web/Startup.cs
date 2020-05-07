@@ -1,5 +1,6 @@
 using Common.Lib;
 using Common.Lib.ServiceAgent;
+using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -7,8 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using STS.Lib;
-using ElmahCore;
-using ElmahCore.Mvc;
 
 namespace STS.Web
 {
@@ -26,6 +25,7 @@ namespace STS.Web
             services.Configure<AppSettings>(appSettingsSection);
             services.AddElmah();
             services.AddControllers();
+            services.AddHttpContextAccessor();
             services.AddScoped<IIdentityAgent, IdentityAgent>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddCors();
