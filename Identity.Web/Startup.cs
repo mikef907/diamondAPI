@@ -1,12 +1,12 @@
 using Common.Lib;
 using Common.Lib.DataAccess;
 using Common.Lib.Models;
+using ElmahCore.Mvc;
 using Identity.Lib;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -15,8 +15,6 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
 using System.Threading.Tasks;
-using ElmahCore;
-using ElmahCore.Mvc;
 
 namespace Identity.Web
 {
@@ -30,6 +28,7 @@ namespace Identity.Web
         {
             services.AddDbContext<IdentityContext>(options => SqliteInMemory.ConfigBuilder<IdentityContext>(options));
             services.AddTransient<IGenericUnitOfWork, GenericUnitOfWork>(options => new GenericUnitOfWork(options.GetRequiredService<IdentityContext>()));
+          
             services.AddSingleton(s => MapFactory.CreateIdentityMapper());
             services.AddControllers();
             services.AddCors();

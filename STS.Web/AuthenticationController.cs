@@ -1,6 +1,9 @@
 ﻿using Common.Lib.Models.DM;
+using ElmahCore;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using STS.Lib;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -12,19 +15,22 @@ namespace STS.Web
     public class AuthenticationController : Controller
     {
         private IAuthenticateService _service { get; set; }
-        public AuthenticationController(IAuthenticateService service) => _service = service;
+        public AuthenticationController(IAuthenticateService service)
+        {
+            _service = service;
+        }
 
         [HttpPost("access-token")]
-        [Consumes("application/x-www-form-urlencoded;charset=utf-8")]
         public async Task<IActionResult> PostAuthentication([FromForm]AccessTokenRequest model)
         {
+            HttpContext.RiseError(new Exception(JsonConvert.SerializeObject(model)));
+
             var accessToken = await _service.GrantAccessToken(model);
             if (accessToken == null) return BadRequest("Credentials invalid");
             else return Ok(accessToken);
         }
 
         [HttpPost("refresh-token")]
-        [Consumes("application/x-www-form-urlencoded;charset=utf-8")]
         public async Task<IActionResult> PostRefreshToken([FromForm]RefreshTokenRequest model) 
         {
             model.Refresh_Token = WebUtility.UrlDecode(model.Refresh_Token);
