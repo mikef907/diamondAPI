@@ -15,6 +15,8 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
 using System.Threading.Tasks;
+using ElmahCore;
+using ElmahCore.Mvc;
 
 namespace Identity.Web
 {
@@ -31,6 +33,7 @@ namespace Identity.Web
             services.AddSingleton(s => MapFactory.CreateIdentityMapper());
             services.AddControllers();
             services.AddCors();
+            services.AddElmah();
 
             // Setup typed access to app settings
             var appSettingsSection = Configuration.GetSection("appSettings");
@@ -96,7 +99,7 @@ namespace Identity.Web
             }
 
             app.UseRouting();
-
+            app.UseElmah();
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseSwagger();

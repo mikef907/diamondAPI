@@ -1,23 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Common.Lib;
+using Common.Lib.DataAccess;
+using Common.Lib.Models;
+using ElmahCore.Mvc;
+using Games.Lib;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
-using Games.Lib;
-using Common.Lib.DataAccess;
-using Common.Lib.Models;
-using Common.Lib;
-using System.Text;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
-using AutoMapper;
 using Microsoft.OpenApi.Models;
+using System;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Games.Web
 {
@@ -45,6 +42,7 @@ namespace Games.Web
                        .AllowCredentials();
             }));
             services.AddSignalR();
+            services.AddElmah();
             services.AddControllers();
             services.AddSwaggerGen(options =>
             {
@@ -106,7 +104,7 @@ namespace Games.Web
             context.Database.EnsureCreated();
 
             app.UseRouting();
-
+            app.UseElmah();
             app.UseCors("CorsPolicy");
 
             app.UseAuthentication();

@@ -7,6 +7,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using STS.Lib;
+using ElmahCore;
+using ElmahCore.Mvc;
 
 namespace STS.Web
 {
@@ -22,6 +24,7 @@ namespace STS.Web
             // Setup typed access to app settings
             var appSettingsSection = Configuration.GetSection("appSettings");
             services.Configure<AppSettings>(appSettingsSection);
+            services.AddElmah();
             services.AddControllers();
             services.AddScoped<IIdentityAgent, IdentityAgent>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
@@ -35,7 +38,7 @@ namespace STS.Web
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseElmah();
             app.UseRouting();
 
             app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
