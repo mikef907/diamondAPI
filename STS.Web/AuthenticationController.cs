@@ -1,6 +1,7 @@
 ﻿using Common.Lib.Models.DM;
 using Microsoft.AspNetCore.Mvc;
 using STS.Lib;
+using System.Net;
 using System.Threading.Tasks;
 
 // For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -22,8 +23,10 @@ namespace STS.Web
         }
 
         [HttpPost("refresh-token")]
+        [Consumes("application/x-www-form-urlencoded;charset=utf-8")]
         public async Task<IActionResult> PostRefreshToken([FromForm]RefreshTokenRequest model) 
         {
+            model.Refresh_Token = WebUtility.UrlDecode(model.Refresh_Token);
             var accessToken = await _service.ConsumeRefreshToken(model);
             if (accessToken == null) return BadRequest();
             else return Ok(accessToken);
