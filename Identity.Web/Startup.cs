@@ -14,6 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Identity.Web
 {
@@ -69,6 +70,20 @@ namespace Identity.Web
                     ClockSkew = TimeSpan.Zero,
                     RequireExpirationTime = true
                 };
+
+                config.Events = new JwtBearerEvents
+                {
+                    OnAuthenticationFailed = context =>
+                    {
+                        if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
+                        {
+                            context.Response.Headers.Add("Token-Expired", "true");
+                            context.Response.StatusCode = 401;
+                        }
+                        return Task.CompletedTask;
+                    }
+
+                };
             });
         }
 
@@ -90,7 +105,7 @@ namespace Identity.Web
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Identity API V1");
             });
 
-            app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithExposedHeaders("*"));
 
             app.UseEndpoints(endpoints =>
             {

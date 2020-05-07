@@ -69,137 +69,6 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/user/{{userId}",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "be6cfe07-8015-4657-937c-8331268e4056",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:44310/user/{{userId}}",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "44310",
-					"path": [
-						"user",
-						"{{userId}}"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://localhost:44310/user/authenticate",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "be6cfe07-8015-4657-937c-8331268e4056",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
-						"exec": [
-							"pm.test(\"Status code is 401\", function () {",
-							"    pm.response.to.have.status(401);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "POST",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:44310/token/authenticate",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "44310",
-					"path": [
-						"token",
-						"authenticate"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "https://localhost:44310/user",
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "be6cfe07-8015-4657-937c-8331268e4056",
-						"exec": [
-							""
-						],
-						"type": "text/javascript"
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
-						"exec": [
-							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
-							"});"
-						],
-						"type": "text/javascript"
-					}
-				}
-			],
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "https://localhost:44310/user",
-					"protocol": "https",
-					"host": [
-						"localhost"
-					],
-					"port": "44310",
-					"path": [
-						"user"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "https://localhost:44376/access-token",
 			"event": [
 				{
@@ -267,12 +136,22 @@
 			"response": []
 		},
 		{
-			"name": "https://localhost:44310/protected",
+			"name": "https://localhost:44310/user/{{userId}",
 			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "be6cfe07-8015-4657-937c-8331268e4056",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
 				{
 					"listen": "test",
 					"script": {
-						"id": "822744f9-29d7-4cb8-88fc-f2d232ddb6c7",
+						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
 						"exec": [
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
@@ -296,7 +175,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "https://localhost:44310/user/protected",
+					"raw": "https://localhost:44310/user/{{userId}}",
 					"protocol": "https",
 					"host": [
 						"localhost"
@@ -304,10 +183,116 @@
 					"port": "44310",
 					"path": [
 						"user",
-						"protected"
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/user/authenticate",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "be6cfe07-8015-4657-937c-8331268e4056",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
+						"exec": [
+							"pm.test(\"Status code is 403\", function () {",
+							"    pm.response.to.have.status(403);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
 					]
 				},
-				"description": "Read Users"
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44310/token/authenticate",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"token",
+						"authenticate"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://localhost:44310/user",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "be6cfe07-8015-4657-937c-8331268e4056",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "2d1f7577-63de-45d5-a5db-bd0f92afe2ee",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://localhost:44310/user",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "44310",
+					"path": [
+						"user"
+					]
+				}
 			},
 			"response": []
 		},
@@ -328,6 +313,16 @@
 				}
 			],
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwt}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "PUT",
 				"header": [],
 				"body": {

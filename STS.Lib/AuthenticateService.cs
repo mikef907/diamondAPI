@@ -76,8 +76,11 @@ namespace STS.Lib
             var currentRefreshToken = await _identityAgent.FetchRefreshToken(userId, jti, _stsToken);
 
             // TODO: Explore just not returning a token from identity if some of these conditions are not true?
-            if (currentRefreshToken != null && currentRefreshToken.Valid && currentRefreshToken.InUse 
-                && currentRefreshToken.Expiry > DateTime.UtcNow && currentRefreshToken.Token == model.Refresh_Token)
+            if (currentRefreshToken != null 
+                && currentRefreshToken.Valid 
+                && currentRefreshToken.InUse 
+                && currentRefreshToken.Expiry > DateTime.UtcNow 
+                && currentRefreshToken.Token == model.Refresh_Token)
             {
                 var newToken = CreateUserToken(userId);
                 var newRefreshToken = GenerateRefreshToken(newToken as JwtSecurityToken);
