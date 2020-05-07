@@ -21,6 +21,7 @@ namespace Identity.Web
         }
 
         [HttpGet]
+        [AllowAnonymous]
         public IEnumerable<User> Get() => _mapper.Map<IEnumerable<User>>(_uow.Repo<EM.User>().Get());
 
         [HttpGet("{id:guid}")]

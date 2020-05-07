@@ -22,7 +22,7 @@ namespace Identity.Web
             _uow = uow;
             _mapper = mapper;
         }
-        // GET api/<controller>/5
+
         [HttpPost("authenticate")]
         public Guid? PostAuthenticateUser([FromBody]AuthenticateModel model) => _uow.Repo<EM.User>().Get(u => u.Email == model.Email && u.Password == model.Password).SingleOrDefault()?.Id;
 
