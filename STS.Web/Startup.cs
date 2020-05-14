@@ -26,6 +26,7 @@ namespace STS.Web
             services.AddElmah();
             services.AddControllers();
             services.AddHttpContextAccessor();
+            services.AddHttpContextAccessor();
             services.AddScoped<IIdentityAgent, IdentityAgent>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddCors();

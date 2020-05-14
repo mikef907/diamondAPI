@@ -1,6 +1,7 @@
 ﻿using Common.Lib;
 using Common.Lib.Models.DM;
 using Common.Lib.ServiceAgent;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -24,12 +25,15 @@ namespace STS.Lib
         private AppSettings _appSettings;
 
         private IIdentityAgent _identityAgent;
+
+        private IHttpContextAccessor _context;
         private JwtSecurityTokenHandler _tokenHandler { get; set; } = new JwtSecurityTokenHandler();
         private static SecurityToken _stsToken { get; set; }
-        public AuthenticateService(IOptions<AppSettings> appSettings, IIdentityAgent identityAgent)
+        public AuthenticateService(IOptions<AppSettings> appSettings, IIdentityAgent identityAgent, IHttpContextAccessor context)
         {
             _appSettings = appSettings.Value;
             _identityAgent = identityAgent;
+            _context = context;
             if (_stsToken == null || _stsToken.ValidTo > DateTime.Now)
             {
                 CreateSTSToken();
@@ -75,15 +79,20 @@ namespace STS.Lib
 
             var currentRefreshToken = await _identityAgent.FetchRefreshToken(userId, jti, _stsToken);
 
+            var IP = _context.HttpContext.Connection.RemoteIpAddress.ToString();
+
             // TODO: Explore just not returning a token from identity if some of these conditions are not true?
             if (currentRefreshToken != null 
                 && currentRefreshToken.Valid 
                 && currentRefreshToken.InUse 
                 && currentRefreshToken.Expiry > DateTime.UtcNow 
+                && currentRefreshToken.IP == IP
                 && currentRefreshToken.Token == model.Refresh_Token)
             {
                 var newToken = CreateUserToken(userId);
                 var newRefreshToken = GenerateRefreshToken(newToken as JwtSecurityToken);
+
+                newRefreshToken.Description = currentRefreshToken.Description;
 
                 await _identityAgent.RemoveRefreshToken(model.Refresh_Token, _stsToken);
                 await _identityAgent.CreateRefreshToken(newRefreshToken, _stsToken);
@@ -144,10 +153,10 @@ namespace STS.Lib
             {
                 rng.GetBytes(randomNumber);
 
-                // TODO: Add Client IP
                 return new RefreshToken()
                 {
                     Token = Convert.ToBase64String(randomNumber),
+                    IP = _context.HttpContext.Connection.RemoteIpAddress.ToString(),
                     JwtId = Guid.Parse(token.Id),
                     UserId = Guid.Parse(token.Claims.Single(c => c.Type == JwtRegisteredClaimNames.UniqueName).Value),
                     Valid = true,

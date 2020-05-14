@@ -11,6 +11,7 @@ namespace Common.Lib.Models.EM
         public Guid UserId { get; set; }
         public User User { get; set; }
         public DateTime Expiry { get; set; }
+        public string Description { get; set; }
         public string IP { get; set; }
         public bool InUse { get; set; }
         public bool Valid { get; set; }
