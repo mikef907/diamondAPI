@@ -46,8 +46,8 @@ deploy:
   - dotnet publish Identity.Web\Identity.Web.csproj --output Identity.Web\bin\Release\netcoreapp3.1\publish --configuration Release
   - dotnet publish STS.Web\STS.Web.csproj --output STS.Web\bin\Release\netcoreapp3.1\publish --configuration Release
   - dotnet publish Games.Web\Games.Web.csproj --output Games.Web\bin\Release\netcoreapp3.1\publish --configuration Release
-  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Identity --version=%VERSION% --basePath=Identity.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
-  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Sts --version=%VERSION% --basePath=STS.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
-  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Games --version=%VERSION% --basePath=Games.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
+  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Identity --basePath=Identity.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
+  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Sts --basePath=STS.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
+  - dotnet octo pack --id=Ahfc.WebSvc.Sandbox2.Games --basePath=Games.Web\bin\Release\netcoreapp3.1\publish\ --outFolder=.
   - dotnet nuget push *.nupkg --api-key %NUGET_FEED_KEY% --source %NUGET_FEED_URL%
   - set VERSION=

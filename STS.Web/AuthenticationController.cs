@@ -1,9 +1,6 @@
 ﻿using Common.Lib.Models.DM;
-using ElmahCore;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using STS.Lib;
-using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -23,8 +20,7 @@ namespace STS.Web
         [HttpPost("access-token")]
         public async Task<IActionResult> PostAuthentication([FromForm]AccessTokenRequest model)
         {
-            HttpContext.RiseError(new Exception(JsonConvert.SerializeObject(model)));
-
+            model.Password = WebUtility.UrlDecode(model.Password);
             var accessToken = await _service.GrantAccessToken(model);
             if (accessToken == null) return BadRequest("Credentials invalid");
             else return Ok(accessToken);

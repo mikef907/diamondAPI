@@ -20,7 +20,6 @@ namespace Common.Lib.ServiceAgent
         {
             _appSettings = appSettings.Value;
             _context = context.HttpContext;
-            _context.RiseError(new Exception(JsonConvert.SerializeObject(_appSettings)));
         }
 
         public bool HasValidToken() => _stsToken != null && _stsToken.ValidTo > DateTime.Now;
