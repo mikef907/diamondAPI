@@ -72,22 +72,22 @@ namespace Common.Lib.ServiceAgent.Tests
                 req.Method == HttpMethod.Post && req.RequestUri == new Uri($"{_appSettingsMock.Value.IdentityURL}token/authenticate")), ItExpr.IsAny<CancellationToken>());
         }
 
-        [Fact()]
-        public void CreateRefreshTokenTest()
-        {
-            Assert.True(false, "This test needs an implementation");
-        }
+        //[Fact()]
+        //public void CreateRefreshTokenTest()
+        //{
+        //    Assert.True(false, "This test needs an implementation");
+        //}
 
-        [Fact()]
-        public void FetchRefreshTokenTest()
-        {
-            Assert.True(false, "This test needs an implementation");
-        }
+        //[Fact()]
+        //public void FetchRefreshTokenTest()
+        //{
+        //    Assert.True(false, "This test needs an implementation");
+        //}
 
-        [Fact()]
-        public void RemoveRefreshTokenTest()
-        {
-            Assert.True(false, "This test needs an implementation");
-        }
+        //[Fact()]
+        //public void RemoveRefreshTokenTest()
+        //{
+        //    Assert.True(false, "This test needs an implementation");
+        //}
     }
 }
