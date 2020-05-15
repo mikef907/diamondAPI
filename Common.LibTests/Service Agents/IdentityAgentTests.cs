@@ -63,7 +63,7 @@ namespace Common.Lib.ServiceAgent.Tests
         {
             RefreshToken refreshTokenMock = new RefreshToken();
            
-            SetupHandler(HttpStatusCode.OK, new StringContent(JsonConvert.SerializeObject(refreshTokenMock), Encoding.UTF8, "application/json"));
+            SetupHandler(HttpStatusCode.OK);
 
             var saFactory = new ServiceAgentFactory(new HttpClient(_handlerMock.Object));
 
@@ -76,11 +76,25 @@ namespace Common.Lib.ServiceAgent.Tests
                 req.Method == HttpMethod.Post && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/refresh")), ItExpr.IsAny<CancellationToken>());
         }
 
-        //[Fact()]
-        //public void FetchRefreshTokenTest()
-        //{
-        //    Assert.True(false, "This test needs an implementation");
-        //}
+        [Fact()]
+        public async Task FetchRefreshTokenTest()
+        {
+            RefreshToken refreshTokenMock = new RefreshToken();
+            Guid testUserId = Guid.NewGuid();
+            Guid testJti = Guid.NewGuid();
+
+            SetupHandler(HttpStatusCode.OK, new StringContent(JsonConvert.SerializeObject(refreshTokenMock), Encoding.UTF8, "application/json"));
+
+            var saFactory = new ServiceAgentFactory(new HttpClient(_handlerMock.Object));
+
+            _agent = new IdentityAgent(_appSettingsMock.Object, _contextAccessorMock.Object, saFactory);
+
+            var result = await _agent.FetchRefreshToken(testUserId, testJti, _stsToken);
+
+            // Verifies the sa called a POST 1 time to the expected URL
+            _handlerMock.Protected().Verify("SendAsync", Times.Exactly(1), ItExpr.Is<HttpRequestMessage>(req =>
+                req.Method == HttpMethod.Get && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/refresh/{testUserId}/{testJti}")), ItExpr.IsAny<CancellationToken>());
+        }
 
         //[Fact()]
         //public void RemoveRefreshTokenTest()
@@ -88,7 +102,7 @@ namespace Common.Lib.ServiceAgent.Tests
         //    Assert.True(false, "This test needs an implementation");
         //}
 
-        private void SetupHandler(HttpStatusCode code, HttpContent content) {
+        private void SetupHandler(HttpStatusCode code, HttpContent content = null) {
             // We can mock the abstracted classes proctected SendAsync method with some Moq foo
             _handlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
