@@ -96,11 +96,23 @@ namespace Common.Lib.ServiceAgent.Tests
                 req.Method == HttpMethod.Get && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/refresh/{testUserId}/{testJti}")), ItExpr.IsAny<CancellationToken>());
         }
 
-        //[Fact()]
-        //public void RemoveRefreshTokenTest()
-        //{
-        //    Assert.True(false, "This test needs an implementation");
-        //}
+        [Fact()]
+        public async Task RemoveRefreshTokenTest()
+        {
+            string testToken = Guid.NewGuid().ToString();
+
+            SetupHandler(HttpStatusCode.OK);
+
+            var saFactory = new ServiceAgentFactory(new HttpClient(_handlerMock.Object));
+
+            _agent = new IdentityAgent(_appSettingsMock.Object, _contextAccessorMock.Object, saFactory);
+
+            await _agent.RemoveRefreshToken(testToken, _stsToken);
+
+            // Verifies the sa called a POST 1 time to the expected URL
+            _handlerMock.Protected().Verify("SendAsync", Times.Exactly(1), ItExpr.Is<HttpRequestMessage>(req =>
+                req.Method == HttpMethod.Delete && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/refresh/{testToken}")), ItExpr.IsAny<CancellationToken>());
+        }
 
         private void SetupHandler(HttpStatusCode code, HttpContent content = null) {
             // We can mock the abstracted classes proctected SendAsync method with some Moq foo
