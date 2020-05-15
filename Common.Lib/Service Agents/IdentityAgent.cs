@@ -36,7 +36,7 @@ namespace Common.Lib.ServiceAgent
 
         public async Task CreateRefreshToken(RefreshToken model, SecurityToken stsToken)
         {
-            using (var http = new HttpClient())
+            using (var http = _saFactory.CreateHttpClient())
             {
                 http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
                 await http.PostAsync($"{_appSettings.IdentityURL}token/refresh", new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json"));
@@ -45,7 +45,7 @@ namespace Common.Lib.ServiceAgent
 
         public async Task<RefreshToken> FetchRefreshToken(Guid userId, Guid jti, SecurityToken stsToken) 
         {
-            using (var http = new HttpClient())
+            using (var http = _saFactory.CreateHttpClient())
             {
                 http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
                 var result = await http.GetAsync($"{_appSettings.IdentityURL}token/refresh/{userId}/{jti}");
@@ -54,7 +54,7 @@ namespace Common.Lib.ServiceAgent
         }
 
         public async Task RemoveRefreshToken(string token, SecurityToken stsToken) {
-            using (var http = new HttpClient())
+            using (var http = _saFactory.CreateHttpClient())
             {
                 http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenHandler.WriteToken(stsToken));
                 await http.DeleteAsync($"{_appSettings.IdentityURL}token/refresh/{token}");

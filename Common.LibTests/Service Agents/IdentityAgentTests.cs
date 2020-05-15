@@ -58,11 +58,23 @@ namespace Common.Lib.ServiceAgent.Tests
                 req.Method == HttpMethod.Post && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/authenticate")), ItExpr.IsAny<CancellationToken>());
         }
 
-        //[Fact()]
-        //public void CreateRefreshTokenTest()
-        //{
-        //    Assert.True(false, "This test needs an implementation");
-        //}
+        [Fact()]
+        public async Task CreateRefreshTokenTest()
+        {
+            RefreshToken refreshTokenMock = new RefreshToken();
+           
+            SetupHandler(HttpStatusCode.OK, new StringContent(JsonConvert.SerializeObject(refreshTokenMock), Encoding.UTF8, "application/json"));
+
+            var saFactory = new ServiceAgentFactory(new HttpClient(_handlerMock.Object));
+
+            _agent = new IdentityAgent(_appSettingsMock.Object, _contextAccessorMock.Object, saFactory);
+
+            await _agent.CreateRefreshToken(refreshTokenMock, _stsToken);
+
+            // Verifies the sa called a POST 1 time to the expected URL
+            _handlerMock.Protected().Verify("SendAsync", Times.Exactly(1), ItExpr.Is<HttpRequestMessage>(req =>
+                req.Method == HttpMethod.Post && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/refresh")), ItExpr.IsAny<CancellationToken>());
+        }
 
         //[Fact()]
         //public void FetchRefreshTokenTest()
