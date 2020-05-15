@@ -1,4 +1,5 @@
 using Common.Lib;
+using Common.Lib.Service_Agents;
 using Common.Lib.ServiceAgent;
 using ElmahCore.Mvc;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +28,7 @@ namespace STS.Web
             services.AddControllers();
             services.AddHttpContextAccessor();
             services.AddHttpContextAccessor();
+            services.AddScoped<ServiceAgentFactory>();
             services.AddScoped<IIdentityAgent, IdentityAgent>();
             services.AddScoped<IAuthenticateService, AuthenticateService>();
             services.AddCors();

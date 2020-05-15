@@ -32,6 +32,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitlab-ci.yml = .gitlab-ci.yml
 		build.cmd = build.cmd
 		clean.cmd = clean.cmd
+		Diamond CRUD.postman_collection.json = Diamond CRUD.postman_collection.json
 		Identity CRUD.postman_collection.json = Identity CRUD.postman_collection.json
 	EndProjectSection
 EndProject

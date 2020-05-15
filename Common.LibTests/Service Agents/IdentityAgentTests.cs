@@ -91,6 +91,8 @@ namespace Common.Lib.ServiceAgent.Tests
 
             var result = await _agent.FetchRefreshToken(testUserId, testJti, _stsToken);
 
+            Assert.NotNull(result);
+
             // Verifies the sa called a POST 1 time to the expected URL
             _handlerMock.Protected().Verify("SendAsync", Times.Exactly(1), ItExpr.Is<HttpRequestMessage>(req =>
                 req.Method == HttpMethod.Get && req.RequestUri == new Uri($"{_appSettingsMock.Object.Value.IdentityURL}token/refresh/{testUserId}/{testJti}")), ItExpr.IsAny<CancellationToken>());
@@ -115,7 +117,7 @@ namespace Common.Lib.ServiceAgent.Tests
         }
 
         private void SetupHandler(HttpStatusCode code, HttpContent content = null) {
-            // We can mock the abstracted classes proctected SendAsync method with some Moq foo
+            // We can mock the abstracted classes protected SendAsync method with some Moq foo
             _handlerMock.Protected()
                 .Setup<Task<HttpResponseMessage>>("SendAsync",
                 ItExpr.IsAny<HttpRequestMessage>(),
